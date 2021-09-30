@@ -20,12 +20,39 @@ import { NotImplementedError } from '../extensions/index.js';
  * 
  */
 export default class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(isDirect = true) {
+    this.isDirect = isDirect
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (message === undefined || key === undefined) throw new Error('Incorrect arguments!')
+    let result = message.toUpperCase().split('');
+    let keyIndex = 0;
+    key = key.toUpperCase();
+    result.forEach((element, index, arr) => {
+      if (element.match(/[A-Z]/)) {
+        let newCode = ((element.charCodeAt(0) - 65) + (key.charCodeAt(keyIndex) - 65)) % 26
+        arr[index] = String.fromCharCode(newCode + 65);
+        keyIndex = ( keyIndex + 1 ) % key.length;
+      }
+    });
+
+    return this.isDirect ? result.join('') : result.reverse().join('')
+  }
+
+  decrypt(encryptedMessage, key) {
+    if (encryptedMessage === undefined || key === undefined) throw new Error('Incorrect arguments!')
+    let result = encryptedMessage.toUpperCase().split('');
+    let keyIndex = 0;
+    key = key.toUpperCase();
+    result.forEach((element, index, arr) => {
+      if (element.match(/[A-Z]/)) {
+        let newCode = ((element.charCodeAt(0) - 65) + 26 - (key.charCodeAt(keyIndex) - 65)) % 26
+        arr[index] = String.fromCharCode(newCode + 65);
+        keyIndex = ( keyIndex + 1 ) % key.length;
+      }
+    });
+
+    return this.isDirect ? result.join('') : result.reverse().join('')
   }
 }
